@@ -7,9 +7,24 @@ sudo: required
 services:
   - docker
 
-# performs a list of commands before installing
+# before_install, script, and deploy are all custom sections each with a list of commands
+# before_install builds the docker image
 before_install:
   - docker build -t afullwood/docker-react -f Dockerfile.dev .
 
+# script runs the test script using the docker image
 script:
   - docker run -e CI=true afullwood/docker-react npm run test
+
+# deploy sends the docker image to aws
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "docker-react"
+  env: "DockerReact-env"
+  bucket_name: "elasticbeanstalk-us-east-2-187024251125"
+  bucket_path: "docker-react"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
