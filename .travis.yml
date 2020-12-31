@@ -1,0 +1,15 @@
+language: generic
+
+# tells travis admin permissions are needed
+sudo: required
+
+# lists the services needed
+services:
+  - docker
+
+# performs a list of commands before installing
+before_install:
+  - docker build -t afullwood/docker-react -f Dockerfile.dev .
+
+script:
+  - docker run -e CI=true afullwood/docker-react npm run test
